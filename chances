@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+import argparse
+
+ALL_TILES = {
+    "A": 9, "B": 2, "C": 2, "D": 4, "E": 12, "F": 2, "G": 3, "H": 2, "I": 9, "J": 1,
+    "K": 1, "L": 4, "M": 2, "N": 6, "O": 8, "P": 2, "Q": 1, "R": 6, "S": 4, "T": 6,
+    "U": 4, "V": 2, "W": 2, "X": 1, "Y": 2, "Z": 1, "_": 2
+}
+
+
+def main():
+    """
+    Takes seen letters in a game of scrabble and prints the
+    probabilities of drawing each letter or space.
+    :return: None
+    """
+
+    parser = argparse.ArgumentParser(
+        description="A CLI that determines the probability of drawing each letter tile "
+                    "in a game of Scrabble.")
+
+    parser.add_argument("-l",
+                        "--letters",
+                        help="A list of all the letters on the board and in the "
+                             "player's hand",
+                        type=str)
+
+    # Step 1: Take seen letters as input from argparse, store in variable.
+    args = parser.parse_args()
+    seen_letters = args.letters.upper()
+    remaining_tiles = {}
+
+    # Step 2: Iterate over string of seen letters, subtract those from ALL_LETTERS, store in in new dict
+    for letter in ALL_TILES.keys():
+        remaining_tiles[letter] = ALL_TILES[letter] - seen_letters.count(letter)
+
+    # Step 3: Create a dictionary with probabilities for each tile.
+    probabilities = {}
+    total_remaining_tiles = sum(remaining_tiles.values())
+    for letter in remaining_tiles.keys():
+        probabilities[letter] = round(remaining_tiles[letter] / total_remaining_tiles * 100, 2)
+
+    formatted_probabilities = {k: f"{v}%" for k, v in probabilities.items()}
+
+    # Step 4: Print out the probabilities.
+    # 68 characters in length in terminal
+    for probability in probabilities.values():
+        if probability < 0:
+            raise Exception("You entered too many tiles for one or more letter.")
+    for k, v in formatted_probabilities.items():
+        print(f"{k}: {v}")
+
+    # column_starting_points = [0, 7, 14, 21]
+    # for i in range(7):
+    #     print(f"{formatted_probabilities[]})
+
+
+main()
